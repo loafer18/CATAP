@@ -137,15 +137,27 @@ for j in range(len(SiteList)):  # j为SiteList范围（0~11），判断如果同
 		if SiteID == SiteList[j]:  # 如果 SiteID 取值 和 SiteList表里值一致，那就是同一个 Site
 			SiteCost += CATMonthlyws.cell(row,4).value # 累加该 Site 的所有金额
 			#print(SiteID, SiteList[j])
-	CostList.append(SiteCost)
+	CostList.append(round(SiteCost,2))
 	SiteCost = 0
 print('各个Site每月费用依次为： '+ str(CostList))
 # 这里的 SiteCost/CostList 金额需要做保留2位有效小数/不保留小数位
+# SiteList = ['AK', 'MF', 'EB', 'DEFAULT', 'WJ', 'NN', 'HB', 'WK', 'KG', 'HO', '66']
+# CostList = [4412.77, 16953588.33, 67981.28, 63245.73, 371618.8, 11362.89, 45059.05, 15551913.5, 3406486.67, 3379.62, 34186.0]
+# 以上程序运行结果与手工验证结果一致。 *****************************************************************
 
-# 下面进行 【品牌】、【金额】统计
-# 数据结构:BrandList = []单独放品牌内容。 BrandCost={3M:4567}统计金额
-# 图表： BrandTimes 柱状图， 由左到右, 次数依次降低； BrandCost 附在BrandTime柱状图右边，辅助显示价格。
-# 最后， BrandCosts 用饼图的形式来显示 各个品牌按百分比所占用所有费用的比例。 更清晰地表明哪些品牌最占资金。
+# 出图： 用饼图 1 显示各Site费用， 用饼图 2 综合显示各国家费用
+
+
+
+
+# 下面进行 【品牌】、【金额】统计， 为了出图适度，挑选费用最高的10大品牌，汇总金额，并用柱状图显示。
+# 出图： 费用前10大品牌， 金额，用柱状图显示。
+
+# 数据结构: TotalList = [9927], BrandList = [966] 所有品牌列表。 BrandCost=[966]统计各品牌汇总金额
+# TopTenCosts = [10]  是 BrandCost[966] 列表里数值最大的10个。
+# TopTenPositions = [10] 根据 TopTenCosts 里的10个数值，找到 BrandList 里的品牌位置。
+# TopTenBrands = [10str] 
+# 
 TotalList = []
 BrandList = []
 # 下面4行为建立所有第8列的品牌值列表 TotalList，有重复。
@@ -156,8 +168,65 @@ print('品牌列一共有： '+str(len(TotalList))+ '个值')
 for row in range(1,nrows):
 	if CATMonthlyws.cell(row,8).value not in BrandList:
 		BrandList.append(CATMonthlyws.cell(row,8).value)
-print ('Total item brands are: %d' %(len(BrandList)))
-print ('Will present top 15 brands chart for further data analyze.')
+print ('所有的品牌数量有: %d' %(len(BrandList)))
+print (BrandList)
+print ('将挑选费用前 10 名的品牌进行分析演示。')
+
+# 下面需要将 966 个品牌的依次费用加总，放入BrandCost[966]列表，并挑出数值最大的10个数值。
+# returnNum 做为一个临时值，存储每一行的金额，并汇总到 returnNum， 后续再 append 到费用列表 BrandCost=[966]
+# 2019/2/16 问题，品牌大小写，程序分为2个品牌，分别计算金额，各品牌汇总金额＜手工品牌汇总金额
+# 所以品牌汇总需忽略大小写， BrandList = [<966]  或者 金额汇总的时候，将大小写一致的品牌金额再汇总
+BrandCost = []
+returnNum = 0
+#for row in range(1,nrows):
+for i in BrandList:
+	for row in range(1,nrows):
+		if CATMonthlyws.cell(row,8).value == i: # 只要品牌名匹配的情况下
+			returnNum += CATMonthlyws.cell(row,4).value  # 将该行金额汇总至returnNum
+			#print (returnNum) 
+	BrandCost.append(round(returnNum))
+	returnNum = 0
+print(BrandCost)
+print(len(BrandCost))		
+
+
+
+# 下面需要挑出数值最大的前 10 个数值，并记录下位置。
+# list method of max, index
+# maxCost 做为一个临时值，存储每一次的最大金额，并汇总到 TopTenCosts, 然后BrandCost列表里清除掉这个值
+TopTenCosts = []
+BrandPositions = []
+maxCost = 0
+maxCostPosition = 0
+TopTenPositions = []
+# 因为后续还需要在 BrandCost ？
+
+for i in range(10):
+	maxCost = max(BrandCost)
+	maxCostPosition = BrandCost.index(maxCost)
+	#print(maxCost)
+	TopTenCosts.append(maxCost)
+	TopTenPositions.append(maxCostPosition)
+	BrandCost.remove(maxCost)
+	maxCost = 0
+	maxCostPosition = 0
+print(TopTenCosts,TopTenPositions)
+# TopTenCosts = [5351236, 5188462, 4637462, 2113558, 1447425, 1075427, 931500, 895391, 699556, 666409]
+# TopTenPositions = [407, 890, 38, 236, 242, 119, 936, 133, 174, 890] 前10大费用品牌在费用总单中的位置
+# 再在同期找出相对应的位置，再 append 到一个位置列表中去。
+
+
+# 下面找品牌的部分先暂停，上面品牌大小写造成品牌金额汇总＜手工汇总金额
+'''
+returnBrand = 0
+for num in TopTenPositions:
+    returnBrand = BrandList[num]
+    print (returnBrand)
+'''
+
+
+
+
 
 '''
 # 下面的代码虽然简单 一个 set 函数就达到了去重的效果，但是获得的 BrandList 数据却是一个集合Set
@@ -167,7 +236,7 @@ print (type(BrandList))
 '''
 
 
-
+'''
 # 按照位置列表，反差15个品牌信息  位置列表为 MaxBrandPositionList = [38,406,3...]
 # 需要从之前的 966 个品牌列表里面按照上面的位置号找出对应的品牌并汇总到一个列表中 TopFifteenBrand = []
 TopFifteenBrand = []
@@ -176,7 +245,7 @@ for i in MaxBrandPositionList:
 	TopBrand = MaxBrandPositionList[i]
 	TopFifteenBrand.append(TopBrand)
 print(TopFifteenBrand)
-
+'''
 
 
 
