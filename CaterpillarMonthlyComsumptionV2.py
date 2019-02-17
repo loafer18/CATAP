@@ -19,7 +19,7 @@ data = 'AIIM Master Report - Vallen - 2019Jan.xls'  # 后期改动：增加待�
 CATMonthly = xlrd.open_workbook(data)
 s = CATMonthly.sheet_by_name('Sheet1')
 
-# print (s.cell(462,4).value) # 无价格的该单元，是一个 为“空” 的字符串？？？
+# print (s.cell(462,4).value) # 无价格的该单元，是一个 为“空” 的字符串
 # 数据清洗： 先判断是否有脏数据，如果有，建立新的工作表，将干净数据复制到新表中； 如果没有脏数据，反馈数据OK
 
 for row in range(1,s.nrows):
@@ -27,13 +27,18 @@ for row in range(1,s.nrows):
 		print('Dirty Data Containing. Needs data sorting.')
 		#print (row)  反馈第一行数据有问题的位置，在row 为 462 时
 		#break 跳出循环
-		break 
+		break
 wbWrite = xlwt.Workbook()
 wsWrite = wbWrite.add_sheet(u'Sheet2', cell_overwrite_ok=True)
 
-# data forwarding
+# data processing 品牌统一为大写
+# for row in range(0,s.nrows):
+
+
+# data forwarding 数据转储->金额为 0 的行们
 for row in range(0,s.nrows):
-	rowValues = s.row_values(row)
+	rowValues = s.row_values(row) # 该行 整行的值
+	# s.cell(row,8).value = (s.cell(row,8).value.upper())  本行赋值代码错误，为无效代码，待删
 
 	'''
 	# 获取 表1 第一行的整行数据
