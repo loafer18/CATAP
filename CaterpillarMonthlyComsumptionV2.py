@@ -123,7 +123,6 @@ for i in range (1, nrows-1):
 		#s.cell(i,8).value = s.cell(i,10).value = 'NA'
 		#i += 1
 	#print (s.cell(i,4).value, s.cell(i,8).value, s.cell(i,10).value)
-
 (below codes seems useless, to be delete)
 	CATMonthly = xlwt.open_Workbook(data)
 	s = CATMonthly.sheet_by_name('Sheet1')
@@ -220,14 +219,83 @@ print(TopTenCosts,TopTenPositions)
 # TopTenPositions = [407, 890, 38, 236, 242, 119, 936, 133, 174, 890] 前10大费用品牌在费用总单中的位置
 # 再在同期找出相对应的位置，再 append 到一个位置列表中去。
 
-
 # 下面找品牌的部分先暂停，上面品牌大小写造成品牌金额汇总＜手工汇总金额
-'''
+# 这里需要对数据进行清理，目前看统计数据差异不大，先将主程序完成，出图，
+# 后续作为一个改进再处理这个问题。 2019/2/18
+
+# 下面针对上面给出的位置数据 TopTenPositions = [10]，找出对应的10大品牌。
+TopTenBrands = []
 returnBrand = 0
+
 for num in TopTenPositions:
     returnBrand = BrandList[num]
-    print (returnBrand)
-'''
+    # print (returnBrand)
+    TopTenBrands.append(returnBrand)
+print(TopTenBrands)
+
+# 下面进行费用最高的 10 大品牌的柱状图显示： Y 轴金额， X 轴品牌
+# TopTenBrands = ['KENNAMETAL', 'ESK', 'SANDVIK', 'TUBTIMSIAM', 'TOP PAC', 'ATLAS', 'INTERNATIONAL PRODUCTS CORPORATION', 'WATANA BHAND', 'LEE&STEEL', 'ESK']
+# 其中之一品牌： INTERNATIONAL PRODUCTS CORPORATION 字符过长，影响图例显示，需要限长
+# CI： 需要自动限长 品牌名字过长的字段  --> 改成水平条形图，将避免品牌名称过长出图难看问题
+# CI： 需要增加图例说明
+TopTenBrands = ['KENNAMETAL', 'ESK', 'SANDVIK', 'TUBTIMSIAM', 'TOP PAC', 'ATLAS', 'INTERNATIONAL', 'WATANA', 'LEE&STEEL', 'ESK']
+plt.bar(TopTenBrands, TopTenCosts)
+plt.show()
+
+
+# 下面进行按Site显示费用， 第一张图为单纯的 Site 柱状图, 第二张图为汇总 Site 为国家的饼图
+# Site 图： Y 轴金额， X 轴为Site; 国家图： Y 轴同样金额， X 轴为国家
+# SiteList= ['AK', 'MF', 'EB', 'DEFAULT', 'WJ', 'NN', 'HB', 'WK', 'KG', 'HO', '66', '']
+# CostList = [4412.77, 16953588.33, 67981.28, 63245.73, 371618.8, 11362.89, 45059.05, 15551913.5, 3406486.67, 3379.62, 34186.0, 0.0]
+# CI: 需要 增加图例说明
+plt.bar(SiteList, CostList)
+plt.show()
+
+# 将 Site 进行国家汇总, 然后出图（饼图）
+# 事先定义好国家清单 Countries = [Singapore, Thailand, China, India, Japan, Australia, Others]
+# 接着将对应 Site 的金额汇总，按国家清单对齐 append 进新的国家金额列表：CountriesCost = []
+Countries = ['Singapore', 'Thailand', 'China', 'India', 'Japan', 'Australia', 'Others']
+CountriesCost = []
+singleCountryCost = 0
+for i in range(len(Countries)):
+	if Countries[i] == 'Singapore':
+		#print("Singapore Amount is: %d" %(CostList[0])) 
+		CountriesCost.append(CostList[0])
+	elif Countries[i] == 'Thailand':
+		CountriesCost.append(CostList[1])
+	elif Countries[i] == 'China':  # i = 2
+		CountriesCost.append(round(CostList[2]+CostList[4]+CostList[5]+CostList[6],2))
+	elif Countries[i] == 'India':  # i = 3 
+		CountriesCost.append(CostList[7]+CostList[8])
+	elif Countries[i] == 'Japan':
+		CountriesCost.append(CostList[10])
+	elif Countries[i] == 'Australia':
+		CountriesCost.append(CostList[9])	
+	else:
+		CountriesCost.append(CostList[3]+CostList[11])
+print('亚太区业务分七个国家/地区, 分别是： '+ str(Countries))
+print('亚太区各国的交易金额为：' + str(CountriesCost))
+
+# 下面将各国交易金额按国家绘制饼图。
+
+color = ['blue', 'springgreen', 'orangered','dodgerblue', 'indianred', 'greenyellow','black']
+explode = [0.05, 0, 0, 0, 0, 0, 0]
+
+patches, l_text, p_text = plt.pie(CountriesCost, explode=explode, colors=color, labels=Countries, labeldistance=1.1, autopct="%1.1f%%", shadow=False, startangle=90, pctdistance=0.6)
+plt.axis('equal')
+plt.legend()
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -241,16 +309,7 @@ print (type(BrandList))
 '''
 
 
-'''
-# 按照位置列表，反差15个品牌信息  位置列表为 MaxBrandPositionList = [38,406,3...]
-# 需要从之前的 966 个品牌列表里面按照上面的位置号找出对应的品牌并汇总到一个列表中 TopFifteenBrand = []
-TopFifteenBrand = []
-# 按 MaxBrandPositionList 位置清单，找到BrandList 中对应的品牌，作图
-for i in MaxBrandPositionList:
-	TopBrand = MaxBrandPositionList[i]
-	TopFifteenBrand.append(TopBrand)
-print(TopFifteenBrand)
-'''
+
 
 
 
@@ -330,7 +389,6 @@ for i in range(4, 65):
         WHcode.append(s.cell(i, 3).value)
         SOHData.append(s.cell(i, 4).value)
         SOOData.append(s.cell(i,5).value)        
-
 #3. 显示数据图形，增加图例，增加x轴y轴及图表抬头，优化图像格式
 plt.bar(WHcode, SOHData, label='SOH')
 plt.bar(WHcode, SOOData, bottom=SOHData, label='SOO')
@@ -339,8 +397,6 @@ plt.ylabel('RMB * 10M')
 plt.legend(loc='upper right')
 plt.title('Data Visualization: Vallen China Daily SOH/SOO (Jan 16 2018)')
 plt.show()
-
 #4. 变换显示数据，增加时间维度
 #5. 增加互动， 点击某方块，图表上显示 数据类别 及 对应数值（单位：百万)
-
 '''
