@@ -12,8 +12,10 @@
 import xlrd
 import xlwt
 import matplotlib.pyplot as plt
+import matplotlib
 from matplotlib.font_manager import FontProperties 
-font = FontProperties(fname=r"C:\Windows\Fonts\simhei.ttf", size=12)
+#font = FontProperties(fname=r"C:\Windows\Fonts\simhei.ttf", size=12)
+font = FontProperties(fname=r"C:\Windows\Fonts\msyh.ttc", size=12)
 
 data = 'AIIM Master Report - Vallen - 2019Jan.xls'  # 后期改动：增加待处理提示，用户自己输入文件名
 CATMonthly = xlrd.open_workbook(data)
@@ -237,9 +239,12 @@ print(TopTenBrands)
 # TopTenBrands = ['KENNAMETAL', 'ESK', 'SANDVIK', 'TUBTIMSIAM', 'TOP PAC', 'ATLAS', 'INTERNATIONAL PRODUCTS CORPORATION', 'WATANA BHAND', 'LEE&STEEL', 'ESK']
 # 其中之一品牌： INTERNATIONAL PRODUCTS CORPORATION 字符过长，影响图例显示，需要限长
 # CI： 需要自动限长 品牌名字过长的字段  --> 改成水平条形图，将避免品牌名称过长出图难看问题
-# CI： 需要增加图例说明
+matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+matplotlib.rcParams['axes.unicode_minus'] = False
 TopTenBrands = ['KENNAMETAL', 'ESK', 'SANDVIK', 'TUBTIMSIAM', 'TOP PAC', 'ATLAS', 'INTERNATIONAL', 'WATANA', 'LEE&STEEL', 'ESK']
-plt.bar(TopTenBrands, TopTenCosts)
+plt.barh(TopTenBrands, TopTenCosts)
+plt.title('销售金额排名前 10 的品牌')
+plt.xlabel('销售金额')
 plt.show()
 
 
@@ -248,8 +253,11 @@ plt.show()
 # SiteList= ['AK', 'MF', 'EB', 'DEFAULT', 'WJ', 'NN', 'HB', 'WK', 'KG', 'HO', '66', '']
 # CostList = [4412.77, 16953588.33, 67981.28, 63245.73, 371618.8, 11362.89, 45059.05, 15551913.5, 3406486.67, 3379.62, 34186.0, 0.0]
 # CI: 需要 增加图例说明
+plt.title('Customer Asia Each Site Sales Amount (2019-Jan)')
+plt.xlabel('Individual Site')
 plt.bar(SiteList, CostList)
 plt.show()
+
 
 # 将 Site 进行国家汇总, 然后出图（饼图）
 # 事先定义好国家清单 Countries = [Singapore, Thailand, China, India, Japan, Australia, Others]
@@ -273,14 +281,15 @@ for i in range(len(Countries)):
 		CountriesCost.append(CostList[9])	
 	else:
 		CountriesCost.append(CostList[3]+CostList[11])
-print('亚太区业务分七个国家/地区, 分别是： '+ str(Countries))
+print('该客户亚太区业务目前分布在七个国家/地区, 分别是： '+ str(Countries))
 print('亚太区各国的交易金额为：' + str(CountriesCost))
+
+
 
 # 下面将各国交易金额按国家绘制饼图。
 
 color = ['blue', 'springgreen', 'orangered','dodgerblue', 'indianred', 'greenyellow','black']
-explode = [0.05, 0, 0, 0, 0, 0, 0]
-
+explode = [0, 0, 0.1, 0, 0, 0, 0]
 patches, l_text, p_text = plt.pie(CountriesCost, explode=explode, colors=color, labels=Countries, labeldistance=1.1, autopct="%1.1f%%", shadow=False, startangle=90, pctdistance=0.6)
 plt.axis('equal')
 plt.legend()

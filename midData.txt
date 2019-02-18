@@ -1,0 +1,35 @@
+
+SiteIDList [9927]
+
+SiteList [11]
+SiteList= ['AK', 'MF', 'EB', 'DEFAULT', 'WJ', 'NN', 'HB', 'WK', 'KG', 'HO', '66', ''] 
+
+Countries = [Singapore, Thailand, China, India, Japan, Australia, Others]
+CountriesCost = [4412.77, 16953588.33, 496022.02, 18958400.17, 34186.0, 3379.62, 63245.73]
+
+Singapore: AK
+
+Thailand: MF, 
+
+China: EB, WJ, NN, HB, 
+
+India: WK, KG, 
+
+Japan: 66
+
+Australia: HO
+
+Others: Default, ''
+
+		
+CostList = [4412.77, 16953588.33, 67981.28, 63245.73, 371618.8, 11362.89, 45059.05, 15551913.5, 3406486.67, 3379.62, 34186.0, 0.0]
+
+
+TotalList = [xxxx] len=9927
+
+BrandList = [xxx]  len=966
+
+TopTenPositions = [407, 890, 38, 236, 242, 119, 936, 133, 174, 890]
+
+TopTenBrands = ['KENNAMETAL', 'ESK', 'SANDVIK', 'TUBTIMSIAM', 'TOP PAC', 'ATLAS', 'INTERNATIONAL PRODUCTS CORPORATION', 'WATANA BHAND', 'LEE&STEEL', 'ESK']
+
